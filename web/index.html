@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Объекты в бакете</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="page-header">
+    <h1>Объекты в S3</h1>
+    <p class="lead">Список — <code>GET /api/objects</code>; загрузка с диска — <code>POST /api/upload-local</code>; копирование по префиксу — <code>POST /api/copy-prefix</code></p>
+  </header>
+
+  <main class="panel">
+    <section class="upload-panel" aria-labelledby="upload-heading">
+      <h2 id="upload-heading" class="section-title">Загрузка с диска</h2>
+      <p class="upload-hint">
+        Положите файлы <code>.jpg</code>, <code>.jpeg</code>, <code>.png</code> или <code>.gif</code> в каталог
+        <code>assets/source/</code> (или путь из <code>LOCAL_SOURCE_DIR</code>). Сервер перекодирует их в JPEG (качество 75) и загрузит под префикс <code>uploads/</code>.
+      </p>
+      <div class="upload-actions">
+        <button type="button" id="upload-local" class="btn btn-secondary">Сжать и загрузить</button>
+        <span id="upload-status" class="upload-status" aria-live="polite"></span>
+      </div>
+      <ul id="upload-log" class="upload-log" hidden></ul>
+    </section>
+
+    <section class="upload-panel" aria-labelledby="copy-heading">
+      <h2 id="copy-heading" class="section-title">Копирование по префиксу</h2>
+      <p class="upload-hint">
+        Тело запроса JSON: <code>{"from":"uploads/","to":"archive/"}</code>. Опционально <code>"delete_source": true</code> — удалить исходные объекты после успешного копирования.
+      </p>
+      <div class="copy-fields">
+        <label class="field">
+          <span class="field-label">Откуда (префикс)</span>
+          <input type="text" id="copy-from" name="copy-from" placeholder="uploads/" autocomplete="off" />
+        </label>
+        <label class="field">
+          <span class="field-label">Куда (префикс)</span>
+          <input type="text" id="copy-to" name="copy-to" placeholder="archive/" autocomplete="off" />
+        </label>
+      </div>
+      <label class="checkbox-field">
+        <input type="checkbox" id="copy-delete" />
+        <span>Удалить исходные после копирования</span>
+      </label>
+      <div class="upload-actions">
+        <button type="button" id="copy-prefix" class="btn btn-secondary">Скопировать</button>
+        <span id="copy-status" class="upload-status" aria-live="polite"></span>
+      </div>
+    </section>
+
+    <div class="toolbar">
+      <label class="field">
+        <span class="field-label">Префикс</span>
+        <input type="text" id="prefix" name="prefix" placeholder="например uploads/" autocomplete="off" />
+      </label>
+      <button type="button" id="refresh" class="btn btn-primary">Обновить</button>
+    </div>
+    <p id="status" class="status" aria-live="polite"></p>
+    <div class="table-wrap">
+      <table class="objects">
+        <thead>
+          <tr>
+            <th scope="col">Ключ</th>
+            <th scope="col" class="num">Размер</th>
+            <th scope="col">Изменён</th>
+          </tr>
+        </thead>
+        <tbody id="tbody">
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <script src="/app.js" defer></script>
+</body>
+</html>
